@@ -1,0 +1,10 @@
+# TODO: 考虑以后将开发需要的依赖包文件和生产依赖包文件分开
+-i https://mirrors.aliyun.com/pypi/simple
+aiofiles==0.6.0
+fastapi==0.61.1
+PyYAML==5.3.1
+requests==2.24.0
+uvicorn==0.11.8
+colorlog==4.7.2
+python-multipart==0.0.5
+pytest
