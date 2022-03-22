@@ -13,7 +13,7 @@ import traceback
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
-from app.log.logger import logger
+from logger import logger
 from app.basic.schemas import ABSBaseModel
 
 app = FastAPI()

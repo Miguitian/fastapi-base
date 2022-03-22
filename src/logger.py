@@ -10,7 +10,7 @@ import os
 import logging
 import logging.handlers
 from colorlog import ColoredFormatter
-from conf import config
+import config
 
 LOG_PATH = config.LogConfig.get_config_value("log_path")
 LOG_LEVEL = config.LogConfig.get_config_value("log_level",

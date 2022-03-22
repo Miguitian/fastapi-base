@@ -11,7 +11,11 @@ import os
 import yaml
 import json
 import sys
-from .__init__ import _project_root
+_project_root = os.path.dirname(
+        os.path.dirname(
+            os.path.realpath(__file__)
+        )
+)
 sys.path.append(_project_root)
 
 try:
