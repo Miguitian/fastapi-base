@@ -1,4 +1,3 @@
-# TODO: 考虑以后将开发需要的依赖包文件和生产依赖包文件分开
 -i https://mirrors.aliyun.com/pypi/simple
 aiofiles==0.6.0
 fastapi==0.61.1
