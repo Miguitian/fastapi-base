@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-    desc: fastapi的启动文件 TODO：可以逐步设置路由相关
+    desc: fastapi的启动文件
     author: miguitian
     date: 2021-12-23
 """
@@ -10,11 +10,18 @@ import uvicorn
 import time
 import os
 import traceback
+import sys
+_project_root = os.path.dirname(
+        os.path.dirname(
+            os.path.realpath(__file__)
+        )
+)
+sys.path.append(_project_root)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
-from logger import logger
-from app.basic.schemas import ABSBaseModel
+from src.logger import logger
+from src.app.basic.schemas import ABSBaseModel
 
 app = FastAPI()
 
@@ -31,9 +38,10 @@ app.add_middleware(
 )
 
 
-@app.post("/ping")
+@app.get("/healthy")
 def ping():
-    return "API正常启动"
+    logger.info('API正常启动')
+    return 'API正常启动'
 
 
 @app.post("/upload_file")
@@ -51,7 +59,7 @@ async def upload_file(file: UploadFile = File(...)):
         start_time = time.time()
         logger.info(f"{file.filename} task start ...")
         file_content = await file.read()
-        file_save_path = os.path.join('../../data', file.filename)
+        file_save_path = os.path.join(_project_root, 'data', file.filename)
         with open(file_save_path, 'wb') as f:
             f.write(file_content)
 

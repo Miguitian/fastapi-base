@@ -23,6 +23,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+CONFIG_PATH = os.path.join(_project_root, f"conf{os.sep}running-config.yml")
 
 def get_configer(config_abs_path):
     """
@@ -90,10 +91,9 @@ class ClientConfiger:
     def __repr__(self):
         return json.dumps(self.yaml_config, ensure_ascii=False, indent=4)
 
-
-LogConfig = ClientConfiger("log", _project_root + "/conf/running-config.yml")  # 获取日志配置相关
+LogConfig = ClientConfiger("log", CONFIG_PATH)  # 获取日志配置相关
 # TODO: 如果有新添加的配置，需要在后面加上按照LogConfig的格式
 
 if __name__ == "__main__":
-    LogConfig = ClientConfiger("log", _project_root + "/conf/running-config.yml")
+    LogConfig = ClientConfiger("log", CONFIG_PATH)
     pass

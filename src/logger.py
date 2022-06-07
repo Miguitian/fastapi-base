@@ -10,10 +10,17 @@ import os
 import logging
 import logging.handlers
 from colorlog import ColoredFormatter
-import config
+import sys
+_project_root = os.path.dirname(
+        os.path.dirname(
+            os.path.realpath(__file__)
+        )
+)
+sys.path.append(_project_root)
+from src.config import LogConfig
 
-LOG_PATH = config.LogConfig.get_config_value("log_path")
-LOG_LEVEL = config.LogConfig.get_config_value("log_level",
+LOG_PATH = LogConfig.get_config_value("log_path")
+LOG_LEVEL = LogConfig.get_config_value("log_level",
                                               default_value='info').lower()
 
 LOG_LEVEL_MAPPINGS = {
