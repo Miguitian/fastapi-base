@@ -24,3 +24,5 @@ docker-compose up -d
 ```
 ## 注意
 在首次开发时，需要用IDE软件将src目录设置为`Sources Root` 目录，否则在用IDE调试的时候会出现模型导入的错误
+
+在使用windows开发时，需要增加环境变量`WINDOWS=True`，否则无法进行调试。问题原因是：windows不支持进程池的调试
