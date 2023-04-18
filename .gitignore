@@ -1,8 +1,10 @@
-.idea
+/venv/
+
+.idea/
 __pycache__/
-pyenv
 .python-version
+.pytest_cache/
 __pypackages__/
-.env
-.venv
-venv/
+.mypy_cache/
+.coverage
+htmlcov

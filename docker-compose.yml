@@ -1,0 +1,14 @@
+version: '3'
+services:
+  fastapibase:
+    build:
+      context: .
+    image: fastapibase:v1.0
+    container_name: fastapibase
+    working_dir: /opt/apps/fastapibase
+    command: python src/run.py
+    volumes:
+      - $PWD/:/opt/apps/fastapibase
+      - ../log/:/log/
+    ports:
+    - 8000:8000

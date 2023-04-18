@@ -1,0 +1,6 @@
+[run]
+omit =
+    test_*.py
+    conftest.py
+    __init__.py
+    logger.py

@@ -1,0 +1,9 @@
+server:
+  port: 8000
+  task_num: 3
+  service_ip: 127.0.0.1
+
+#日志相关
+log:
+  log_path:       #若没写任何参数，默认不会将日志写入日志文件
+  log_level: info         #info, warning, error

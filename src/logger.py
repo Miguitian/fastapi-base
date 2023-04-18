@@ -1,27 +1,22 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!usr/bin/env python
+# -*- coding:utf-8 _*-
 """
-    desc: 日志打印相关
-    author: miguitian
-    date: 2021-02-01
+author: Miguitian
+@time: 2022/10/28
+@file: logger.py
+@description:
 """
-
+# pylint: disable=C0103, E0401, C0116, W0611, C0411
 import os
-import logging
-import logging.handlers
-from colorlog import ColoredFormatter
 import sys
-_project_root = os.path.dirname(
-        os.path.dirname(
-            os.path.realpath(__file__)
-        )
-)
-sys.path.append(_project_root)
-from src.config import LogConfig
+from config import LogConfig  # pylint: disable=E0401
+import logging.handlers
+from logging.config import dictConfig
+from cloghandler import ConcurrentRotatingFileHandler
 
 LOG_PATH = LogConfig.get_config_value("log_path")
 LOG_LEVEL = LogConfig.get_config_value("log_level",
-                                              default_value='info').lower()
+                                       default_value='info').lower()
 
 LOG_LEVEL_MAPPINGS = {
     'notset': logging.NOTSET,
@@ -32,44 +27,120 @@ LOG_LEVEL_MAPPINGS = {
     'critical': logging.CRITICAL
 }
 
+if LOG_PATH:
 
-def Logger(name):
-    logger = logging.getLogger(name)
-    logger.propagate = False  # 防止日志重复打印 logger.propagate 布尔标志, 用于指示消息是否传播给父记录器
-    logger.setLevel(LOG_LEVEL_MAPPINGS[LOG_LEVEL])
-    LOGFORMAT = '%(log_color)s%(asctime)s-%(name)s %(levelname)s:  %(message)s'
-    format_str = ColoredFormatter(LOGFORMAT,
-                                  log_colors={'DEBUG': 'white',
-                                              'INFO': 'bold_white',
-                                              'WARNING': 'bold_yellow',
-                                              "ERROR": 'bold_red'})
+    if not os.path.exists(LOG_PATH):
+        os.makedirs(LOG_PATH, exist_ok=True)
 
-    sh = logging.StreamHandler()
-    sh.setFormatter(format_str)
+    LOGGING_CONFIG_FILE = {
+        "version": 1,
+        "formatters": {
+            "default": {
+                'format': '%(asctime)s %(levelname)s  %(message)s',
+            },
+            "plain": {
+                "format": "%(message)s",
+            },
+            'colored': {
+                '()': 'colorlog.ColoredFormatter',
+                'format': "%(log_color)s %(asctime)s %(levelname)s %(reset)s %(blue)s%(message)s"}
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "level": LOG_LEVEL_MAPPINGS[LOG_LEVEL],
+                "formatter": "colored",
+                "stream": sys.stdout,
+            },
+            # "file": {
+            #     "class": "logging.handlers.TimedRotatingFileHandler",  # 该方法为进程不安全，暂时没有解决方案
+            #     "level": LOG_LEVEL_MAPPINGS[LOG_LEVEL],
+            #     "filename": os.path.join(LOG_PATH, "app.log"),
+            #     "encoding": "utf-8",
+            #     "formatter": "default",
+            #     "when": "M",
+            #     "interval": 2,
+            #     "backupCount": 30,
+            # }
+            "file": {
+                "class": "logging.handlers.ConcurrentRotatingFileHandler",
+                "level": LOG_LEVEL_MAPPINGS[LOG_LEVEL],
+                "filename": os.path.join(LOG_PATH, "app.log"),
+                "encoding": "utf-8",
+                "formatter": "default",
+                "mode": "a",
+                "maxBytes": 1024 * 1024 * 100,
+                "backupCount": 30,
+            }
+        },
+        "loggers": {
 
-    if LOG_PATH:
-        if not os.path.exists(LOG_PATH):
-            os.makedirs(LOG_PATH, exist_ok=True)
-        # 按照文件大小进行存储
-        # th = logging.handlers.RotatingFileHandler(os.path.join(LOG_PATH, '{}.log'.format(name)), mode='a',
-        #                                           maxBytes=1024 * 1024 * 100,
-        #                                           backupCount=10, encoding='utf-8')
+            "file_logger": {
+                "handlers": ["file", "console"],
+                "level": "INFO",
+                "propagate": False,
+            },
+            "uvicorn": {
+                "handlers": ["file", "console"],
+                "level": "INFO",
+                "propagate": False,
+            }
 
-        # 按照时间进行存储
-        th = logging.handlers.TimedRotatingFileHandler(
-            os.path.join(LOG_PATH, name),
-            when="midnight",
-            interval=1,
-            backupCount=30,
-            encoding='utf-8'
-        )
-        format_str = logging.Formatter(
-            '%(asctime)s-%(name)s-%(levelname)s:  %(message)s')
-        th.setFormatter(format_str)
-        logger.addHandler(th)
+        },
+        "disable_existing_loggers": True,
+        "root": {
+            "level": "INFO",  # # handler中的level会覆盖掉这里的level
+            "handlers": ["console", "file"],
+        }
+    }
 
-    logger.addHandler(sh)
-    return logger
+    LOGGING_CONFIG = LOGGING_CONFIG_FILE
+    LOGGER_NAME = 'file_logger'
 
+else:
+    LOGGING_CONFIG_CONSOLE = {
+        "version": 1,
+        "formatters": {
+            "default": {
+                'format': '%(asctime)s %(levelname)s%(message)s',
+            },
+            "plain": {
+                "format": "%(message)s",
+            },
+            'colored': {
+                '()': 'colorlog.ColoredFormatter',
+                'format': "%(log_color)s%(asctime)s %(levelname)s %(reset)s %(blue)s%(message)s"}
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "level": LOG_LEVEL_MAPPINGS[LOG_LEVEL],
+                "formatter": "colored",
+                "stream": sys.stdout,
 
-logger = Logger("app")
+            }
+        },
+        "loggers": {
+
+            "console_logger": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            },
+            "uvicorn": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            }
+        },
+        "disable_existing_loggers": True,
+        "root": {
+            "level": "INFO",  # handler中的level会覆盖掉这里的level
+            "handlers": ["console"],
+        }
+    }
+    LOGGING_CONFIG = LOGGING_CONFIG_CONSOLE
+    LOGGER_NAME = 'console_logger'
+
+logging.config.dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger(LOGGER_NAME)  # 不写就是root

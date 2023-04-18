@@ -1,29 +1,30 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!usr/bin/env python
+# -*- coding:utf-8 _*-
 """
-    desc: 读取配置文件
-    author: miguitian
-    date: 2021-04-16
+author: Miguitian
+@time: 2022/10/28
+@file: config.py
+@description:
 """
-
+# pylint: disable=C0103, E0401, C0116, W0611
 import traceback
 import os
-import yaml
 import json
-import sys
-_project_root = os.path.dirname(
-        os.path.dirname(
-            os.path.realpath(__file__)
-        )
-)
-sys.path.append(_project_root)
+import yaml
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
 
-CONFIG_PATH = os.path.join(_project_root, f"conf{os.sep}running-config.yml")
+_PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(
+        os.path.realpath(__file__)
+    )
+)
+
+CONFIG_PATH = os.path.join(_PROJECT_ROOT, f"conf{os.sep}config.yml")
+
 
 def get_configer(config_abs_path):
     """
@@ -78,22 +79,21 @@ class ClientConfiger:
             traceback.print_exc()
         return self
 
-    def get_remote_url(self, remote_url_name):
-        url = self.yaml_config[self.config_type]["url"].get(remote_url_name)
-        return "http://{host}:{port}{url}".format(
-            host=self.yaml_config[self.config_type]["host"],
-            port=self.yaml_config[self.config_type]["port"], url=url)
-
     def get_config_value(self, config_key_name, default_value=None):
         return self.yaml_config[self.config_type].get(config_key_name,
                                                       default_value)
 
+    def get_model_path(self, config_key_name):
+        model_name = self.yaml_config[self.config_type].get(config_key_name)
+        model_path = os.path.join(_PROJECT_ROOT, "model", model_name)
+        return model_path
+
     def __repr__(self):
         return json.dumps(self.yaml_config, ensure_ascii=False, indent=4)
 
-LogConfig = ClientConfiger("log", CONFIG_PATH)  # 获取日志配置相关
-# TODO: 如果有新添加的配置，需要在后面加上按照LogConfig的格式
+
+ServerConfig = ClientConfiger("server", CONFIG_PATH)
+LogConfig = ClientConfiger("log", CONFIG_PATH)
 
 if __name__ == "__main__":
     LogConfig = ClientConfiger("log", CONFIG_PATH)
-    pass
