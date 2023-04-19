@@ -12,12 +12,12 @@ import pathlib
 from pylint.lint import Run
 
 _PROJECT_DIR = str(pathlib.Path(__file__).resolve().parents[1])
-sys.path.append(_PROJECT_DIR)
+CHECK_DIR = os.path.join(_PROJECT_DIR, 'src')
+sys.path.append(CHECK_DIR)
 
 MIN_SCORE = 9.0
 # 由于pylint在多进程下得分和单进程不一致，暂时强制单进程
 _CPU_COUNT = 1
-CHECK_DIR = os.path.join(_PROJECT_DIR, 'src')
 
 
 def lint_files(files):
