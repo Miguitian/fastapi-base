@@ -36,6 +36,10 @@ APP.add_middleware(
 )
 
 
+def callback(result):
+    del result
+
+
 @APP.get("/version")
 def ping():
     system_version = "v1.0.0.20230420_Release"
@@ -68,7 +72,7 @@ def async_task_create(task_info: TaskInfo):
                 message="任务已经在处理中",
             )
     else:
-        result = POOL.apply_async(run_task, args=(task_info,))
+        result = POOL.apply_async(run_task, args=(task_info,), callback=callback)
         TASK_INFO[task_info.taskUuid] = result
         logger.info(f"{task_info.taskUuid} Task created successfully.")
 
