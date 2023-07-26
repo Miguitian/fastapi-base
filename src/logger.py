@@ -12,7 +12,7 @@ import sys
 from config import LogConfig  # pylint: disable=E0401
 import logging.handlers
 from logging.config import dictConfig
-from cloghandler import ConcurrentRotatingFileHandler
+from concurrent_log_handler import ConcurrentRotatingFileHandler
 
 LOG_PATH = LogConfig.get_config_value("log_path")
 LOG_LEVEL = LogConfig.get_config_value("log_level",
