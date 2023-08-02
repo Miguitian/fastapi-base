@@ -34,7 +34,7 @@ class CreateTaskReturn(BaseModel):
 
 class TaskInfo(BaseModel):
     """
-    电子指令分类需要提交的信息
+    任务需要提交的信息
     """
     taskUuid: str
     taskInfo: str  # 实际项目中，该位置需要更改为项目定义的接口信息
@@ -42,7 +42,7 @@ class TaskInfo(BaseModel):
 
 class TaskReturnInfo(BaseModel):
     """
-    电子指令分类返回的信息
+    任务返回的信息
     """
     taskUuid: str
     taskStatus: str = "SUCCESS"
