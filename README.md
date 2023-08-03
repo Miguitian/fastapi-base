@@ -22,6 +22,14 @@ docker-compose build
 # 启动
 docker-compose up -d
 ```
+
+## 代码覆盖率测试
+```commandline
+pip install -r requirements.dev.txt
+cd tests
+pytest --cov --cov-report=html
+```
+
 ## 注意
 在首次开发时，需要用IDE软件将src目录设置为`Sources Root` 目录，否则在用IDE调试的时候会出现模型导入的错误
 
